@@ -1,0 +1,90 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC demo</title>
+    <style>
+    button {
+        padding: 8px 16px;
+    }
+
+    pre {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    video {
+        width: 100%;
+    }
+
+    .option {
+        margin-bottom: 8px;
+    }
+
+    #media {
+        max-width: 1280px;
+    }
+    </style>
+</head>
+<body>
+
+<h2>Options</h2>
+<div class="option">
+    <input id="use-datachannel" checked="checked" type="checkbox"/>
+    <label for="use-datachannel">Use datachannel</label>
+</div>
+<div class="option">
+    <input id="use-audio" checked="checked" type="checkbox"/>
+    <label for="use-audio">Use audio</label>
+</div>
+<div class="option">
+    <input id="use-video" type="checkbox" checked="1"/>
+    <label for="use-video">Use video</label>
+    <select id="video-transform">
+        <option value="edges">Edge detection</option>
+        <option value="rotate">Rotate</option>
+        <option value="green">Green frame</option>
+        <option value="blue">light blue frame</option>
+        <option value="rect" selected="1">draw rectangle with OpenCV</option>
+        <option value="yolov3">object detection with YOLO v3</option>
+        <option value="yolov3_rectcv">detection YOLO v3, rect openCV</option>
+        <option value="none">None</option>
+    </select>
+</div>
+
+<button id="start" onclick="start()">Start</button>
+<button id="stop" style="display: none" onclick="stop()">Stop</button>
+
+<h2>State</h2>
+<p>
+    ICE gathering state: <span id="ice-gathering-state"></span>
+</p>
+<p>
+    ICE connection state: <span id="ice-connection-state"></span>
+</p>
+<p>
+    Signaling state: <span id="signaling-state"></span>
+</p>
+
+<div id="media" style="display: none">
+    <h2>Media</h2>
+
+    <p>You should see a video alternating between the raw and transformed video.</p>
+    <audio id="audio" autoplay="true"></audio>
+    <video id="video" autoplay="true"></video>
+</div>
+
+<h2>Data channel</h2>
+<pre id="data-channel" style="height: 200px;"></pre>
+
+<h2>SDP</h2>
+
+<h3>Offer</h3>
+<pre id="offer-sdp"></pre>
+
+<h3>Answer</h3>
+<pre id="answer-sdp"></pre>
+
+<script src="client.js"></script>
+</body>
+</html>
