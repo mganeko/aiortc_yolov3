@@ -16,7 +16,7 @@ ENV DEBIAN_FRONTEND nonineractive
 #
 # -- build tools --
 #
-RUN apt update && RUN apt upgrade -y
+RUN apt update && apt upgrade -y
 
 RUN apt install python3 -y
 RUN apt install python3-pip -y
@@ -67,18 +67,18 @@ RUN git clone https://github.com/mganeko/python3_yolov3.git
 RUN cp /root/work/python3_yolov3/darknet-tiny-label.py /root/work/darknet/python/
 
 
-#-- copy ---
-WORKDIR /root/work/
-RUN git clone https://github.com/mganeko/aiortc_yolov3.git
-COPY /root/work/python3_yolov3/server_yolo.py /root/work/aiortc/examples/server/
-COPY /root/work/python3_yolov3/index.html /root/work/aiortc/examples/server/
-#COPY array_test.py /root/work/aiortc/examples/server/
-
 # --- link ---
 RUN ln -s /root/work/darknet/cfg /root/work/aiortc/examples/server/
 RUN ln -s /root/work/darknet/data /root/work/aiortc/examples/server/
 RUN ln -s /root/work/darknet/yolov3-tiny.weights /root/work/aiortc/examples/server/
 
+#-- copy ---
+WORKDIR /root/work/
+RUN git clone https://github.com/mganeko/aiortc_yolov3.git
+RUN cp /root/work/aiortc_yolov3/server_yolo.py /root/work/aiortc/examples/server/
+RUN cp /root/work/aiortc_yolov3/index.html /root/work/aiortc/examples/server/
+#COPY server_yolo.py /root/work/aiortc/examples/server/
+#COPY index.html /root/work/aiortc/examples/server/
 
 
 # --- for running --
@@ -102,8 +102,11 @@ CMD [ "python3", "server_yolo.py" ]
 # -- run --
 # docker run -d -p 8001:8080 --name aio mganeko/aiortc-yolov3
 
-# -- stop --
+# -- stop & remove --
 # docker stop aio
+
+# -- remove ---
+# docker rm aio
 
 # -- remove stoped container ---
 # docker rm $(docker ps -q -f status=exited)
