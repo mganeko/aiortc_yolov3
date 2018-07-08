@@ -31,6 +31,11 @@ sample for aiortc with darknet YOLO v3 for Python 3
 - python3 server_yolo.py
 - open http://local:8080/ with Chrome
 
+# Note
+
+This sample is example to convert between aiortc frame and darknet image.
+Object detection without GPU is still far from handling realtime video.
+
 
 # License
 
