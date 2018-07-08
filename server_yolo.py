@@ -309,14 +309,17 @@ class VideoTransformTrack(VideoStreamTrack):
                 results = detect_area(dn_image, thresh=.5, hier_thresh=.5, nms=.45)
  
                 for result in results:
-                  name = result[0]
+                  #name = result[0] # error
+                  name = str(result[0])  # b'abc'
+                  #name = '' + str(result[0])  # b'abc'
+                  
                   area = result[2]
                   left = int(area[0] - area[2]/2)
                   top = int(area[1] - area[3]/2)
                   right = int(area[0] + area[2]/2)
                   bottom = int(area[1] + area[3]/2)
                   img = cv2.rectangle(img, (left, top), (right, bottom), (255, 128,0), 3, 4)
-                  img = cv2.putText(img, 'object', (left, top), cv2.FONT_HERSHEY_PLAIN, 2, (255, 128, 0), 2, 4)
+                  img = cv2.putText(img, name, (left, top), cv2.FONT_HERSHEY_PLAIN, 2, (255, 128, 0), 2, 4)
                 
                 newFrame = frame_from_bgr(img)
                 return newFrame
