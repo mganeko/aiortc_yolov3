@@ -1,0 +1,130 @@
+# Ubuntu 18.04 and aiortc
+#  aiortc: https://github.com/jlaine/aiortc
+
+FROM ubuntu:18.04
+MAINTAINER mganeko
+
+#  
+# -- if you are using docker behind proxy, please set ENV --
+#
+
+#ENV http_proxy "http://proxy.yourdomain.com:8080/"
+#ENV https_proxy "http://proxy.yourdomain.com:8080/"
+
+ENV DEBIAN_FRONTEND nonineractive
+
+# -- build step --
+RUN apt update
+RUN apt upgrade -y
+
+RUN apt install python3 -y
+RUN apt install python3-pip -y
+RUN apt install python3-dev -y
+RUN python3 -V
+RUN pip3 -V
+RUN pip3 install --upgrade pip
+RUN pip -V
+
+
+RUN apt install libopus-dev -y
+RUN apt install libvpx-dev -y
+RUN apt install libffi-dev -y
+RUN apt install libssl-dev -y
+
+# -- timezone で止まる
+RUN apt install libopencv-dev -y
+# RUN DEBIAN_FRONTEND=nonineractive apt install libopencv-dev -y
+
+
+RUN apt install git -y
+
+RUN mkdir /root/work 
+WORKDIR /root/work/
+RUN git clone https://github.com/jlaine/aiortc.git
+
+RUN pip install aiohttp
+RUN pip install aiortc 
+RUN pip install opencv-python
+
+#-- copy ---
+#COPY server2.py /root/work/aiortc/examples/server/
+#COPY server_yolo.py /root/work/aiortc/examples/server/
+
+
+#
+# ------ yolo v3 ---
+#
+
+RUN apt install vim -y
+RUN apt install wget -y
+WORKDIR /root/work/
+RUN git clone https://github.com/pjreddie/darknet.git
+WORKDIR /root/work/darknet
+RUN make
+RUN wget https://pjreddie.com/media/files/yolov3.weights
+RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
+
+RUN ln -s /root/work/darknet/libdarknet.so /usr/lib/libdarknet.so
+
+#-- copy ---
+COPY darknet-tiny.py /root/work/darknet/python/
+COPY darknet-tiny-label.py /root/work/darknet/python/
+
+# --- link ---
+RUN ln -s /root/work/darknet/cfg /root/work/aiortc/examples/server/
+RUN ln -s /root/work/darknet/data /root/work/aiortc/examples/server/
+RUN ln -s /root/work/darknet/yolov3-tiny.weights /root/work/aiortc/examples/server/
+
+
+#-- copy ---
+COPY index_w.html /root/work/aiortc/examples/server/index.html
+COPY client_w.js /root/work/aiortc/examples/server/client.js
+#COPY client.js /root/work/aiortc/examples/server/client.js
+COPY server_yolo_worker.py /root/work/aiortc/examples/server/
+
+
+
+
+
+# --- for running --
+EXPOSE 8080
+
+WORKDIR /root/work/aiortc/examples/server/
+#CMD [ "python3", "server_yolo.py" ]
+CMD [ "python3", "server_yolo_worker.py" ]
+
+
+# ----
+# memo
+# ----
+
+# -- to build --
+# docker build -t mganeko/aiortc-yolov3 -f Dockerfile.aiortc_yolo .
+
+# docker build --no-cache=true -t mganeko/aiortc-yolov3 -f Dockerfile.aiortc_yolo .
+
+# -- bash --
+# docker run -it mganeko/aiortc-yolov3 bash
+# docker run -it  -p 8001:8080 mganeko/aiortc-yolov3 bash
+#
+# docker run -it -v /Users/ganeko/project/docker/aiortc/temp:/root/work/temp mganeko/aiortc-yolov3 bash
+
+
+# -- run yolo --
+# ./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
+#
+# python3 python/darknet-tiny.py
+
+# -- run --
+# docker run -d -p 8001:8080 --name aio mganeko/aiortc-yolov3
+
+# -- stop --
+# docker stop aio
+
+# -- remove stoped container ---
+# docker rm $(docker ps -q -f status=exited)
+
+# -- connect to running container ---
+# docker exec -i -t {id or name} /bin/bash
+
+
