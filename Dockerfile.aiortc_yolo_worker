@@ -66,9 +66,6 @@ RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
 
 RUN ln -s /root/work/darknet/libdarknet.so /usr/lib/libdarknet.so
 
-#-- copy ---
-#COPY darknet-tiny.py /root/work/darknet/python/
-#COPY darknet-tiny-label.py /root/work/darknet/python/
 
 # --- link ---
 RUN ln -s /root/work/darknet/cfg /root/work/aiortc/examples/server/
@@ -77,11 +74,16 @@ RUN ln -s /root/work/darknet/yolov3-tiny.weights /root/work/aiortc/examples/serv
 
 
 #-- copy ---
-COPY index_w.html /root/work/aiortc/examples/server/index.html
-COPY client_w.js /root/work/aiortc/examples/server/client.js
-#COPY client.js /root/work/aiortc/examples/server/client.js
-COPY server_yolo_worker.py /root/work/aiortc/examples/server/
+WORKDIR /root/work/
+RUN git clone https://github.com/mganeko/aiortc_yolov3.git
+RUN cp /root/work/aiortc_yolov3/server_yolo_worker.py /root/work/aiortc/examples/server/
+RUN cp /root/work/aiortc_yolov3/index_w.html /root/work/aiortc/examples/server/index.html
+RUN cp /root/work/aiortc_yolov3/client_w.js /root/work/aiortc/examples/server/client.js
 
+#COPY index_w.html /root/work/aiortc/examples/server/index.html
+#COPY client_w.js /root/work/aiortc/examples/server/client.js
+##COPY client.js /root/work/aiortc/examples/server/client.js
+#COPY server_yolo_worker.py /root/work/aiortc/examples/server/
 
 
 
