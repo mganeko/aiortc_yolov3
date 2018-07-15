@@ -458,7 +458,43 @@ def onDetected(future):
         if i >= max_result_count:
             break
 
-    workerBusy.value = 0
+def onDetected(future):
+    #print('--- future on end---')
+    #-- get result --
+    detect_results = future.result() # <--- wait at here
+
+    # -- clear last results ---
+    with workerBusy.get_lock():
+        for i in range(max_result_count):
+            lastResults[i] = DETECT_RESULT(0, 0, 0, 0, 0)
+
+    # --- convert results ---
+    i = 0
+    for r in detect_results:
+        cid = r[0]
+        #name = meta.names[cid]
+        b = r[2]
+        x = b[0]
+        y = b[1]
+        w = b[2]
+        h = b[3]
+        left = int(x - w/2)
+        top = int(y - h/2)
+        right = int(x + w/2)
+        bottom = int(y + h/2)
+
+        # -- update last result ---
+        with workerBusy.get_lock():
+            lastResults[i] = DETECT_RESULT(left, top, right, bottom, cid)
+
+        i = i + 1
+        if i >= max_result_count:
+            break
+
+    # -- worker finish --
+    with workerBusy.get_lock():
+      workerBusy.value = 0
+
     return
 
 # --- init yolo v3 tiny ---
