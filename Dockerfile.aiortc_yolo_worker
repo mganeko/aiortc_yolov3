@@ -67,8 +67,8 @@ RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
 RUN ln -s /root/work/darknet/libdarknet.so /usr/lib/libdarknet.so
 
 #-- copy ---
-COPY darknet-tiny.py /root/work/darknet/python/
-COPY darknet-tiny-label.py /root/work/darknet/python/
+#COPY darknet-tiny.py /root/work/darknet/python/
+#COPY darknet-tiny-label.py /root/work/darknet/python/
 
 # --- link ---
 RUN ln -s /root/work/darknet/cfg /root/work/aiortc/examples/server/
@@ -100,6 +100,7 @@ CMD [ "python3", "server_yolo_worker.py" ]
 
 # -- to build --
 # docker build -t mganeko/aiortc-yolov3 -f Dockerfile.aiortc_yolo .
+# docker build -t mganeko/aiortc-yolov3 -f Dockerfile.aiortc_yolo_worker .
 
 # docker build --no-cache=true -t mganeko/aiortc-yolov3 -f Dockerfile.aiortc_yolo .
 
