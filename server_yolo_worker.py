@@ -402,7 +402,7 @@ def workerDetect(data):
     res = detectObjects(net, meta, img, alphabet)
     return res
 
-# in: im, out:result(name and rect)
+# in: im, out:result(id and rect)
 def detectObjects(net, meta, im, alp, thresh=.5, hier_thresh=.5, nms=.45):
     #print('------ start detect ----')
     num = c_int(0)
